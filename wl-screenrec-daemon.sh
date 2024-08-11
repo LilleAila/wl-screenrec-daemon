@@ -116,8 +116,8 @@ stop_daemon() {
 }
 
 script_help() {
-  printf "%b" "$(cat <<EOF
-Wrapper around wl-wl-screenrec-daemon to easily record the last few seconds and copy the video to the clipboard
+  printf "%b\n" "$(cat <<EOF
+Wrapper around wl-screenrec to easily record the last few seconds and copy the video to the clipboard
 
 \e[1;4mUsage:\e[0m
   \e[1mwl-screenrec-daemon --help, -h\e[0m
