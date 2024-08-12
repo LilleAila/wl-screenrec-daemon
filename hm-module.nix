@@ -41,7 +41,7 @@ in
       };
 
       Install = {
-        WantedBy = "graphical-session.target";
+        WantedBy = [ "graphical-session.target" ];
       };
     };
   };
