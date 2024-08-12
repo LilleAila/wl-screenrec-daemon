@@ -25,6 +25,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [ cfg.package ];
     systemd.user.services.wl-screenrec-daemon = {
       Unit = {
         Description = "wl-screenrec-daemon";
