@@ -16,6 +16,7 @@
           runtimeInputs = with pkgs; [
             wl-screenrec
             libnotify
+            coreutils
           ];
           text = builtins.readFile ./wl-screenrec-daemon.sh;
         };
