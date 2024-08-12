@@ -17,7 +17,6 @@ reset_rec() {
     echo "Error: file $rec_file already exists!"
     exit 1
   fi
-  echo "$rec_args"
   wl-screenrec --history "$rec_history" --filename "$rec_file" ${rec_args[@]:+"${rec_args[@]}"} > /dev/null &
   rec_pid="$!"
 }
@@ -43,7 +42,6 @@ record() {
 read_args() {
   if [ "$#" -gt  0 ]; then
     while [ "$1" != "--" ] && [ -n "$1" ] && [ "$#" -gt 0 ]; do
-      echo "$1"
       case $1 in
         "--history"|"-h")
           if [[ -n $2 && ! $2 =~ ^-- ]]; then
