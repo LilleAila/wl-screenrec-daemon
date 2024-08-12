@@ -2,7 +2,7 @@
   description = "A daemon for the history feature of wl-screenrec";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
   outputs =
-    { nixpkgs, ... }@inputs:
+    { self, nixpkgs, ... }@inputs:
     let
       lib = nixpkgs.lib;
       systems = lib.systems.flakeExposed;
@@ -21,5 +21,10 @@
         };
         default = wl-screenrec-daemon;
       });
+
+      homeManagerModules = rec {
+        wl-screenrec-daemon = import ./hm-module.nix self;
+        default = wl-screenrec-daemon;
+      };
     };
 }
