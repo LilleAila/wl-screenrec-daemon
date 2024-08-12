@@ -3,6 +3,7 @@ self:
   config,
   pkgs,
   lib,
+  ...
 }:
 let
   cfg = config.services.wl-screenrec-daemon;
