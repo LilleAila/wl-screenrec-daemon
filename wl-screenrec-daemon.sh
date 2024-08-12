@@ -17,7 +17,8 @@ reset_rec() {
     echo "Error: file $rec_file already exists!"
     exit 1
   fi
-  wl-screenrec --history "$rec_history" --filename "$rec_file" "${rec_args[@]}" > /dev/null &
+  echo "$rec_args"
+  wl-screenrec --history "$rec_history" --filename "$rec_file" ${rec_args[@]:+"${rec_args[@]}"} > /dev/null &
   rec_pid="$!"
 }
 
@@ -40,32 +41,41 @@ record() {
 }
 
 read_args() {
-  while [ "$1" != "--" ] && [ "$#" -gt 0 ]; do
-    case $1 in
-      "--history"|"-h")
-        if [[ -n $2 && ! $2 =~ ^-- ]]; then
-            rec_history=$2
-            shift
-        else
-            echo "Error: --history requires a value"
-            exit 1
-        fi
-        ;;
-    esac
-    shift
-  done
-  if [ "$1" == "--" ]; then
-    shift
-    rec_args=( "$@" )
+  if [ "$#" -gt  0 ]; then
+    while [ "$1" != "--" ] && [ -n "$1" ] && [ "$#" -gt 0 ]; do
+      echo "$1"
+      case $1 in
+        "--history"|"-h")
+          if [[ -n $2 && ! $2 =~ ^-- ]]; then
+              rec_history=$2
+              shift
+          else
+              echo "Error: --history requires a value"
+              exit 1
+          fi
+          ;;
+        *)
+          echo "Error: unknown option $1"
+          exit 1
+      esac
+      shift
+    done
+    if [ "$1" == "--" ]; then
+      shift
+      rec_args=( "$@" )
+    fi
   fi
 }
 
 cleanup() {
   # shellcheck disable=SC2317
-  echo 0 > "$fifo_path" & # it's blocking, so it won't be able to read unless with &
+  if [[ -p "$fifo_path" ]]; then
+    echo 0 > "$fifo_path" & # it's blocking, so it won't be able to read unless with &
+  fi
 }
 
 daemon() {
+  shift
   read_args "$@"
   if [[ -p $fifo_path ]]; then
     echo "Daemon is already running!"
@@ -73,7 +83,7 @@ daemon() {
   fi
   reset_rec
   mkfifo $fifo_path
-  trap cleanup INT TERM
+  trap cleanup INT TERM HUP EXIT
   while true; do
     if read -r line < "$fifo_path"; then
       if [[ "$line" == "1" ]]; then
