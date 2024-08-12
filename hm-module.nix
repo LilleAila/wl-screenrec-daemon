@@ -30,10 +30,12 @@ in
     systemd.user.services.wl-screenrec-daemon = {
       Unit = {
         Description = "wl-screenrec-daemon";
-        PartOf = "graphical-session.target";
+        PartOf = [ "graphical-session.target" ];
+        Requires = [ "graphical-session.target" ];
       };
 
       Service = {
+        Type = "simple";
         ExecStart = "${lib.getExe cfg.package} --daemon ${lib.concatStringsSep cfg.args} -- ${lib.concatStringsSep cfg.wl-screenrec-args}";
         Restart = "on-failure";
       };
