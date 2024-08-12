@@ -36,7 +36,7 @@ in
 
       Service = {
         Type = "simple";
-        ExecStart = "${lib.getExe cfg.package} --daemon ${lib.concatStringsSep cfg.args} -- ${lib.concatStringsSep cfg.wl-screenrec-args}";
+        ExecStart = "${lib.getExe cfg.package} --daemon ${lib.concatStringsSep " " cfg.args} -- ${lib.concatStringsSep " " cfg.wl-screenrec-args}";
         Restart = "on-failure";
       };
 
