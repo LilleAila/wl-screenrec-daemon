@@ -11,10 +11,11 @@
     in
     {
       packages = forEachSystem (pkgs: rec {
+        wl-screenrec = pkgs.callPackage ./wl-screenrec.nix { }; # the version in nixpkgs is too old, crashes sometimes on suspend
         wl-screenrec-daemon = pkgs.writeShellApplication {
           name = "wl-screenrec-daemon";
           runtimeInputs = with pkgs; [
-            wl-screenrec
+            wl-screenrec # should use the one from rec instead of from pkgs
             libnotify
             coreutils
           ];

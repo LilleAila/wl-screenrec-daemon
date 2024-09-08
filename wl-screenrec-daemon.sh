@@ -9,8 +9,7 @@ rec_args=""
 rec_history="15"
 
 reset_rec() {
-  if [ -n "$rec_pid" ]; then
-    # should never happen, but just in case
+  if [ -n "$rec_pid" ] && kill -0 "$rec_pid" 2>/dev/null; then
     kill -INT "$rec_pid"
   fi
   if [ -f "$rec_file" ]; then
@@ -23,13 +22,18 @@ reset_rec() {
 
 record() {
   if [[ "$recording" = true ]]; then
-    kill -USR1 "$rec_pid"
-    notify-send "Starting screen recording from the last $rec_history seconds" -t 1000
-    rec_started=$(date +"%Y-%m-%dT%H:%M:%S")
     recording=false
+    echo "$rec_pid"
+    if [ -n "$rec_pid" ] && kill -0 "$rec_pid" 2>/dev/null; then
+      kill -USR1 "$rec_pid"
+      notify-send "Starting screen recording from the last $rec_history seconds" -t 1000
+      rec_started=$(date +"%Y-%m-%dT%H:%M:%S")
+    fi
   else
-    kill -INT "$rec_pid"
-    rec_pid=""
+    if [ -n "$rec_pid" ] && kill -0 "$rec_pid" 2>/dev/null; then
+      kill -INT "$rec_pid"
+      rec_pid=""
+    fi
     output_file="$HOME/Videos/screenrec_${rec_started}.mp4"
     mv "$rec_file" "$output_file"
     wl-copy -t text/uri-list <<< "file://$output_file"
@@ -82,12 +86,29 @@ daemon() {
   reset_rec
   mkfifo $fifo_path
   trap cleanup INT TERM HUP EXIT
+
+  monitor_rec() {
+    while true; do
+      # restart the recording if it somehow crashed (russelltg/wl-screenrec#83)
+      if [ -n "$rec_pid" ] && ! kill -0 "$rec_pid" 2>/dev/null; then
+        echo "wl-screenrec crashed, restarting" 1>&2
+        recording=true
+        rec_pid=""
+        rm -f "$rec_file"
+        reset_rec
+      fi
+      sleep 1
+    done
+  }
+
+  monitor_rec & # monitor the process in the background
+
   while true; do
     if read -r line < "$fifo_path"; then
       if [[ "$line" == "1" ]]; then
         record
       elif [[ "$line" == "0" ]]; then
-        if [ -n "$rec_pid" ]; then
+        if [ -n "$rec_pid" ] && kill -0 "$rec_pid" 2>/dev/null; then
           kill -INT "$rec_pid"
         fi
         rm -f "$fifo_path"
@@ -95,13 +116,6 @@ daemon() {
         exit 0
       fi
     fi
-    # FIXME: this is a temporary workaround for russelltg/wl-screenrec#83
-    if [[ -n "$rec_pid" && ! -e /proc/$rec_pid ]]; then
-      rm "$rec_file"
-      rec_pid=""
-      reset_rec
-    fi
-    sleep 0.1
   done
 }
 
