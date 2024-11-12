@@ -23,3 +23,7 @@ Usage:
   wl-screenrec-daemon --toggle
     Start / stop the recording. This will include the last 15 seconds.
 ```
+
+## home-manager module
+
+The home-manager module is still a work-in-progress, but might work as long as `WAYLAND_DISPLAY` is properly passed to systemd services.
