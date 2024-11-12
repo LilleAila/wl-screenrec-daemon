@@ -3,9 +3,10 @@
 This is a daemon for [wl-screenrec](https://github.com/russelltg/wl-screenrec) that uses the `--history` feature to always be recording in the background.
 
 ## Usage:
+
 ```
 $ wl-screenrec-daemon --help
-Wrapper around wl-wl-screenrec-daemon to easily record the last few seconds and copy the video to the clipboard
+Wrapper around wl-screenrec to easily record the last few seconds and copy the video to the clipboard
 
 Usage:
   wl-screenrec-daemon --help, -h
