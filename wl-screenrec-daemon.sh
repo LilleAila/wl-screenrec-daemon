@@ -87,22 +87,6 @@ daemon() {
   mkfifo $fifo_path
   trap cleanup INT TERM HUP EXIT
 
-  monitor_rec() {
-    while true; do
-      # restart the recording if it somehow crashed (russelltg/wl-screenrec#83)
-      if [ -n "$rec_pid" ] && ! kill -0 "$rec_pid" 2>/dev/null; then
-        echo "wl-screenrec crashed, restarting" 1>&2
-        recording=true
-        rec_pid=""
-        rm -f "$rec_file"
-        reset_rec
-      fi
-      sleep 1
-    done
-  }
-
-  monitor_rec & # monitor the process in the background
-
   while true; do
     if read -r line < "$fifo_path"; then
       if [[ "$line" == "1" ]]; then

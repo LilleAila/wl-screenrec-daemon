@@ -17,7 +17,25 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "wl-screenrec-src": "wl-screenrec-src"
+      }
+    },
+    "wl-screenrec-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1731195031,
+        "narHash": "sha256-cEz7Mhpp5dxM96NdOK9gzko5IEw9jgEouozhjE4yRm0=",
+        "owner": "russelltg",
+        "repo": "wl-screenrec",
+        "rev": "76d39d8d0c60f2d3965d1a61c251d735d35da7e0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "russelltg",
+        "ref": "russell/reconnect_on_lost_output",
+        "repo": "wl-screenrec",
+        "type": "github"
       }
     }
   },

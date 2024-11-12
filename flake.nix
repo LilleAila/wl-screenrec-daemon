@@ -1,6 +1,14 @@
 {
   description = "A daemon for the history feature of wl-screenrec";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    wl-screenrec-src = {
+      url = "github:russelltg/wl-screenrec/russell/reconnect_on_lost_output";
+      flake = false;
+    };
+  };
+
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
@@ -11,7 +19,7 @@
     in
     {
       packages = forEachSystem (pkgs: rec {
-        wl-screenrec = pkgs.callPackage ./wl-screenrec.nix { }; # the version in nixpkgs is too old, crashes sometimes on suspend
+        wl-screenrec = pkgs.callPackage ./wl-screenrec.nix { inherit (inputs) wl-screenrec-src; };
         wl-screenrec-daemon = pkgs.writeShellApplication {
           name = "wl-screenrec-daemon";
           runtimeInputs = with pkgs; [

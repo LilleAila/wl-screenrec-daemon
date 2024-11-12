@@ -1,25 +1,20 @@
 {
+  wl-screenrec-src,
   lib,
   rustPlatform,
-  fetchFromGitHub,
   pkg-config,
   libdrm,
   ffmpeg_7,
   wayland,
 }:
 
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "wl-screenrec";
   version = "master";
 
-  src = fetchFromGitHub {
-    owner = "russelltg";
-    repo = pname;
-    rev = "e5e651c644fa0ae699dcf84ba5f140b8adc607de";
-    hash = "sha256-9Csy+hEUjiiYOJeT9PoIqhOhsnHp6O5V3sKpakAgPAI=";
-  };
+  src = wl-screenrec-src;
 
-  cargoHash = "sha256-I7ABTIb/TMJKlCr0hhRzgMXnkchw+dHgrP+ktWbSkSo=";
+  cargoHash = "sha256-KKNjuwGGCBabeCOw95D2MWGn7BXIoC12AGvZPLnFUoc=";
 
   nativeBuildInputs = [
     pkg-config
